@@ -1,116 +1,136 @@
-class Book:
-    def __init__(self, title, author, isbn, genre, quantity):
-        self.title = title
-        self.author = author
-        self.isbn = isbn
-        self.genre = genre
-        self.quantity = quantity
+from datetime import datetime, timedelta
 
-    def update_info(self, title=None, author=None, isbn=None, genre=None, quantity=None):
-        if title:
-            self.title = title
-        if author:
-            self.author = author
-        if isbn:
-            self.isbn = isbn
-        if genre:
-            self.genre = genre
-        if quantity is not None:
-            self.quantity = quantity
-
-    def __str__(self):
-        return f"{self.title} by {self.author} | ISBN: {self.isbn} | Genre: {self.genre} | Quantity: {self.quantity}"
-
-
-class Borrower:
-    def __init__(self, name, contact_details, membership_id):
-        self.name = name
-        self.contact_details = contact_details
-        self.membership_id = membership_id
-
-    def update_info(self, name=None, contact_details=None):
-        if name:
-            self.name = name
-        if contact_details:
-            self.contact_details = contact_details
-
-    def __str__(self):
-        return f"{self.name} | Contact: {self.contact_details} | Membership ID: {self.membership_id}"
-
-
-class Library:
+class LibraryManager:
     def __init__(self):
-        self.books = {}
-        self.borrowers = {}
+        self.books_dict = []
+        self.borrowers_list = []
         self.borrowed_books = {}
 
     def add_book(self, book):
-        if book.isbn in self.books:
-            self.books[book.isbn].quantity += book.quantity
-        else:
-            self.books[book.isbn] = book
-        print(f'Book "{book.title}" added to the library.')
+        for each_book in self.books_dict:
+            if book['isbn'] == each_book['isbn']:
+                each_book['quantity'] += book['quantity']
+                print(f"Quantity of '{book['title']}' updated in library.")
+                return
+        self.books_dict.append(book)
+        print(f"Book '{book['title']}' added to library.")
 
     def remove_book(self, isbn):
-        if isbn in self.books:
-            del self.books[isbn]
-            print(f'Book with ISBN {isbn} removed from the library.')
-        else:
-            print(f'Book with ISBN {isbn} not found.')
+        for book in self.books_dict:
+            if isbn == book['isbn']:
+                self.books_dict.remove(book)
+                print(f"Book with ISBN {isbn} removed from the library.")
+                return
+        print(f"Book with ISBN {isbn} not found.")
+
+    def search_book(self, title):
+        found = False
+        for book in self.books_dict:
+            if title.lower() == book['title'].lower():
+                print(f"Book '{book['title']}' found.")
+                found = True
+        if not found:
+            print(f"Book with title '{title}' not found in the library.")
+
+    def update_book(self, isbn, title=None, author=None, genre=None, quantity=None):
+        for book in self.books_dict:
+            if isbn == book['isbn']:
+                if title:
+                    book['title'] = title
+                if author:
+                    book['author'] = author
+                if genre:
+                    book['genre'] = genre
+                if quantity is not None:
+                    book['quantity'] = quantity
+                print(f"Book with ISBN {isbn} has been updated.")
+                return
+        print(f"Book with ISBN {isbn} not found.")
 
     def add_borrower(self, borrower):
-        self.borrowers[borrower.membership_id] = borrower
-        print(f'Borrower "{borrower.name}" added to the system.')
+        self.borrowers_list.append(borrower)
+        print(f'Borrower "{borrower["name"]}" added to the system.')
 
     def remove_borrower(self, membership_id):
-        if membership_id in self.borrowers:
-            del self.borrowers[membership_id]
-            print(f'Borrower with membership ID {membership_id} removed from the system.')
-        else:
-            print(f'Borrower with membership ID {membership_id} not found.')
+        for borrower in self.borrowers_list:
+            if membership_id == borrower['membership_id']:
+                self.borrowers_list.remove(borrower)
+                print(f'Borrower with membership ID {membership_id} removed from the system.')
+                return
+        print(f'Borrower with membership ID {membership_id} not found.')
+
+    def search_borrower(self, name):
+        found = False
+        for borrower in self.borrowers_list:
+            if name.lower() == borrower['name'].lower():
+                print(f'Borrower "{borrower["name"]}" found.')
+                found = True
+        if not found:
+            print(f'Borrower "{name}" not found in the system.')
+
+    def update_borrower(self, membership_id, name=None, contact_details=None):
+        for borrower in self.borrowers_list:
+            if membership_id == borrower['membership_id']:
+                if name:
+                    borrower['name'] = name
+                if contact_details:
+                    borrower['contact_details'] = contact_details
+                print(f'Borrower with membership ID {membership_id} has been updated.')
+                return
+        print(f'Borrower with membership ID {membership_id} not found.')
 
     def borrow_book(self, isbn, membership_id, due_date):
-        if isbn in self.books and membership_id in self.borrowers and self.books[isbn].quantity > 0:
-            self.books[isbn].quantity -= 1
-            self.borrowed_books[(isbn, membership_id)] = due_date
-            print(f'Book with ISBN {isbn} borrowed by {membership_id}.')
-        else:
-            print(f'Failed to borrow book with ISBN {isbn} for membership ID {membership_id}.')
+        for book in self.books_dict:
+            if isbn == book['isbn']:
+                if book['quantity'] > 0:
+                    self.books_dict[self.books_dict.index(book)]['quantity'] -= 1
+                    self.borrowed_books[(isbn, membership_id)] = due_date
+                    print(f'Book with ISBN {isbn} borrowed by {membership_id}.')
+                    return
+                else:
+                    print(f'All copies of Book with ISBN {isbn} are currently borrowed.')
+                    return
+        print(f'Book with ISBN {isbn} not found.')
 
     def return_book(self, isbn, membership_id):
         if (isbn, membership_id) in self.borrowed_books:
             del self.borrowed_books[(isbn, membership_id)]
-            if isbn in self.books:
-                self.books[isbn].quantity += 1
-            print(f'Book with ISBN {isbn} returned by {membership_id}.')
+            for book in self.books_dict:
+                if isbn == book['isbn']:
+                    self.books_dict[self.books_dict.index(book)]['quantity'] += 1
+                    print(f'Book with ISBN {isbn} returned by {membership_id}.')
+                    return
+        print(f'Book with ISBN {isbn} not borrowed by {membership_id}.')
+
+    def check_overdue_books(self, current_date=None):
+        if not current_date:
+            current_date = datetime.now().date()
+        
+        overdue_books = []
+        for (isbn, membership_id), due_date in self.borrowed_books.items():
+            if current_date > due_date:
+                overdue_books.append((isbn, membership_id))
+        
+        if overdue_books:
+            print("Overdue Books:")
+            for isbn, membership_id in overdue_books:
+                print(f"Book with ISBN {isbn} borrowed by {membership_id} is overdue.")
         else:
-            print(f'Failed to return book with ISBN {isbn} for membership ID {membership_id}.')
+            print("No overdue books.")
 
-    def search_books(self, title=None, author=None, genre=None):
-        results = []
-        for book in self.books.values():
-            if (title and title.lower() in book.title.lower()) or \
-               (author and author.lower() in book.author.lower()) or \
-               (genre and genre.lower() in book.genre.lower()):
-                results.append(book)
-                print(book)
-                print(f"Available copies: {book.quantity}")
-        return results
-    
-    def show_availability(self,isbn):
-        if isbn in self.books:
-            book=self.books[isbn]
-            print(f'Book "{book.title}" availability: {book.quantity} copies.')
+    def show_all_books(self):
+        if self.books_dict:
+            print("Books in Library:")
+            for book in self.books_dict:
+                print(f"{book['title']} by {book['author']} | ISBN: {book['isbn']} | Genre: {book['genre']} | Quantity: {book['quantity']}")
         else:
-            print(f'Book with ISBN {isbn} not found.')
+            print("No books in Library.")
 
+    def show_all_borrowers(self):
+        if self.borrowers_list:
+            print("Borrowers in System:")
+            for borrower in self.borrowers_list:
+                print(f"{borrower['name']} | Membership ID: {borrower['membership_id']} | Contact Details: {borrower['contact_details']}")
+        else:
+            print("No borrowers in System.")
 
-library = Library()
-book1 = Book('1984', 'George Orwell', '123456789', 'Dystopian', 5)
-library.add_book(book1)
-borrower1 = Borrower('John Doe', '123 Main St', 'ID001')
-library.add_borrower(borrower1)
-library.borrow_book('123456789', 'ID001', '2024-07-01')
-library.show_availability('123456789')
-library.return_book('123456789', 'ID001')
-library.search_books(title='1984')
