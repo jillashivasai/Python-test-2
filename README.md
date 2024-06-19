@@ -56,4 +56,33 @@ Represents the library itself.
 ## Example Usage
 
 ```python
-# Example usage code can go here...
+library = LibraryManager()
+
+book1 = Book('1984', 'George Orwell', '123456789', 'Dystopian', 5)
+book2 = Book('Nineteen Eighty-Four', 'George Orwell', '12121', 'Science Fiction', 10)
+book3 = Book('To Kill a Mockingbird', 'Harper Lee', '987654321', 'Classic', 3)
+book4 = Book('The Great Gatsby', 'F. Scott Fitzgerald', '555555555', 'Classic', 7)
+
+library.add_book(book1)
+library.add_book(book2)
+library.add_book(book3)
+library.add_book(book4)
+
+borrower1 = Borrower('John Doe', '123 Main St', 'ID001')
+borrower2 = Borrower('Jane Smith', '456 Elm St', 'ID002')
+
+library.add_borrower(borrower1)
+library.add_borrower(borrower2)
+
+library.borrow_book('123456789', 'ID001', '2024-07-01')
+library.borrow_book('12121', 'ID002', '2024-07-10')
+
+library.show_availability('123456789')
+library.show_availability('12121')
+
+library.return_book('123456789', 'ID001')
+library.return_book('12121', 'ID002')
+
+library.show_all_books()
+
+library.search_books(author='George Orwell')
