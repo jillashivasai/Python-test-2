@@ -34,8 +34,8 @@ Represents a borrower in the library.
 Represents the library itself.
 
 #### Attributes:
-- `books`: A dictionary of books in the library, keyed by ISBN.
-- `borrowers`: A dictionary of borrowers in the library, keyed by membership ID.
+- `books_dict`: A list of books in the library.
+- `borrowers_list`: A list of borrowers in the library.
 - `borrowed_books`: A dictionary of borrowed books, keyed by a tuple of (ISBN, membership ID).
 
 #### Methods:
@@ -45,35 +45,15 @@ Represents the library itself.
 - `remove_borrower(membership_id)`: Removes a borrower from the library by membership ID.
 - `borrow_book(isbn, membership_id, due_date)`: Borrows a book for a borrower.
 - `return_book(isbn, membership_id)`: Returns a borrowed book.
-- `search_books(title=None, author=None, genre=None)`: Searches for books by title, author, or genre.
-- `show_availability(isbn)`: Shows the availability of a book by ISBN.
+- `search_book(title)`: Searches for a book by title.
+- `search_borrower(name)`: Searches for a borrower by name.
+- `update_book(isbn, title=None, author=None, genre=None, quantity=None)`: Updates book information.
+- `update_borrower(membership_id, name=None, contact_details=None)`: Updates borrower information.
+- `show_all_books()`: Displays all books in the library.
+- `show_all_borrowers()`: Displays all borrowers in the library.
+- `check_overdue_books(current_date=None)`: Checks for overdue books.
 
 ## Example Usage
 
 ```python
-# Create a library instance
-library = Library()
-
-# Create a book instance
-book1 = Book('1984', 'George Orwell', '123456789', 'Dystopian', 5)
-
-# Add the book to the library
-library.add_book(book1)
-
-# Create a borrower instance
-borrower1 = Borrower('John Doe', '123 Main St', 'ID001')
-
-# Add the borrower to the library
-library.add_borrower(borrower1)
-
-# Borrow the book
-library.borrow_book('123456789', 'ID001', '2024-07-01')
-
-# Show the availability of the book
-library.show_availability('123456789')
-
-# Return the book
-library.return_book('123456789', 'ID001')
-
-# Search for a book
-library.search_books(title='1984')
+# Example usage code can go here...
